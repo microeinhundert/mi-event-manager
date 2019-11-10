@@ -10,7 +10,7 @@ import { debounce } from 'debounce';
 import { on, off } from 'delegated-events';
 import { EventBusSingleton as EventBus } from 'light-event-bus';
 
-class Handler {
+class EventHandler {
   /**
    * Handler
    */
@@ -511,7 +511,7 @@ class EventManager {
    * @returns {void}
    */
   constructor(handlers = [], options = {}) {
-    this.handlers = handlers.map(handler => new Handler(handler, options));
+    this.handlers = handlers.map(handler => new EventHandler(handler, options));
   }
 }
 

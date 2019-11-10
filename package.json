@@ -1,7 +1,7 @@
 {
   "name": "mi-event-manager",
-  "version": "1.0.2",
-  "description": "Provides a streamlined interface for managing DOM events, supporting delagation, debouncing, selectors, single elements and NodeLists.",
+  "version": "1.0.0",
+  "description": "Provides a streamlined interface for managing DOM events, supporting event delegation, debouncing, adding events by selector, to a single element, or a NodeList.",
   "main": "dist/index.js",
   "repository": "microeinhundert/mi-event-manager",
   "scripts": {
@@ -24,6 +24,7 @@
     "@babel/cli": "^7.7.0",
     "@babel/core": "^7.7.2",
     "@babel/plugin-proposal-class-properties": "^7.7.0",
+    "@babel/plugin-proposal-object-rest-spread": "^7.6.2",
     "@babel/preset-env": "^7.7.1"
   },
   "dependencies": {
