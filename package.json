@@ -1,0 +1,34 @@
+{
+  "name": "mi-event-manager",
+  "version": "1.0.2",
+  "description": "A small utility to update parts of an HTMLDocument with content from another HTMLDocument, configured with a simple configuration object and data attribute.",
+  "main": "dist/index.js",
+  "repository": "microeinhundert/mi-event-manager",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "transpile": "babel src -d dist --copy-files --no-comments",
+    "prepublishOnly": "npm run transpile"
+  },
+  "keywords": [
+    "event",
+    "manager",
+    "dom",
+    "delegate",
+    "element",
+    "selector",
+    "debounce"
+  ],
+  "author": "Leon Seipp <l.seipp@microeinhundert.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "@babel/cli": "^7.7.0",
+    "@babel/core": "^7.7.2",
+    "@babel/plugin-proposal-class-properties": "^7.7.0",
+    "@babel/preset-env": "^7.7.1"
+  },
+  "dependencies": {
+    "debounce": "^1.2.0",
+    "delegated-events": "^1.1.1",
+    "light-event-bus": "^1.0.1"
+  }
+}
