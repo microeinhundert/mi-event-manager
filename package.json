@@ -1,7 +1,7 @@
 {
   "name": "mi-event-manager",
   "version": "1.0.2",
-  "description": "A small utility to update parts of an HTMLDocument with content from another HTMLDocument, configured with a simple configuration object and data attribute.",
+  "description": "Provides a streamlined interface for managing DOM events, supporting delagation, debouncing, selectors, single elements and NodeLists.",
   "main": "dist/index.js",
   "repository": "microeinhundert/mi-event-manager",
   "scripts": {
