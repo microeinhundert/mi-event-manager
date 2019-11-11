@@ -265,8 +265,6 @@ var EventHandler = function () {
 
     _defineProperty(this, "_handler", {});
 
-    _defineProperty(this, "_debug", false);
-
     _defineProperty(this, "_options", {
       strictChecking: false,
       debug: false

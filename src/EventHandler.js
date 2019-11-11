@@ -9,11 +9,6 @@ class EventHandler {
   _handler = {};
 
   /**
-   * Debug mode
-   */
-  _debug = false;
-
-  /**
    * Options
    */
   _options = {
