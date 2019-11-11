@@ -9,3 +9,5 @@ or
 ```console
 yarn add mi-event-manager
 ```
+
+TODO
