@@ -6,7 +6,7 @@
   "repository": "microeinhundert/mi-event-manager",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "transpile": "babel src --copy-files --no-comments --out-file dist/index.js",
+    "transpile": "babel src -d dist --copy-files --no-comments",
     "prepublishOnly": "npm run transpile"
   },
   "keywords": [
