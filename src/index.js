@@ -123,7 +123,5 @@ class EventManager {
   }
 }
 
-export {
-  EventManager,
-  EventBus
-};
+export default EventManager;
+export { EventManager, EventBus };

@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports["default"] = void 0;
+exports.default = void 0;
 
 var _debounce = require("debounce");
 
@@ -279,7 +279,7 @@ var EventHandler = function () {
 }();
 
 var _default = EventHandler;
-exports["default"] = _default;
+exports.default = _default;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -291,13 +291,13 @@ Object.defineProperty(exports, "EventBus", {
     return _lightEventBus.EventBusSingleton;
   }
 });
-exports.EventManager = void 0;
+exports.EventManager = exports.default = void 0;
 
 var _lightEventBus = require("light-event-bus");
 
 var _EventHandler = _interopRequireDefault(require("./EventHandler"));
 
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
 
@@ -400,7 +400,7 @@ var EventManager = function () {
     _defineProperty(this, "handlers", {});
 
     this.handlers = handlers.map(function (handler) {
-      return new _EventHandler["default"](handler, options);
+      return new _EventHandler.default(handler, options);
     });
   }
 
@@ -408,3 +408,5 @@ var EventManager = function () {
 }();
 
 exports.EventManager = EventManager;
+var _default = EventManager;
+exports.default = _default;
