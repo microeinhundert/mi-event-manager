@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Provides a streamlined interface for managing DOM events, supporting event delegation, debouncing, adding events by selector, to a single element, or a NodeList.",
   "main": "dist/index.js",
+  "module": "src/index.js",
   "repository": "microeinhundert/mi-event-manager",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
