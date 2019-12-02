@@ -115,7 +115,7 @@ var EventManager = function () {
 
     _classCallCheck(this, EventManager);
 
-    _defineProperty(this, "handlers", {});
+    _defineProperty(this, "_handlers", {});
 
     this.handlers = handlers.map(function (handler) {
       return new _EventHandler.default(handler, options);
