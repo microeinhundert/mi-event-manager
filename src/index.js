@@ -6,7 +6,7 @@ class EventManager {
   /**
    * Handlers
    */
-  handlers = {};
+  _handlers = {};
 
   /**
    * Getter to get the handlers.
