@@ -393,6 +393,9 @@ class EventHandler {
   constructor(handler = {}, options = {}) {
     this.handler = handler;
 
+    // 'elements' alias for 'element'
+    if ('elements' in handler) this.handler.element = handler.elements;
+
     if ('debug' in options) this.options.debug = !!options.debug;
     if ('strictChecking' in options) this.options.strictChecking = !!options.strictChecking;
   }

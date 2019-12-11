@@ -271,6 +271,7 @@ var EventHandler = function () {
     });
 
     this.handler = handler;
+    if ('elements' in handler) this.handler.element = handler.elements;
     if ('debug' in options) this.options.debug = !!options.debug;
     if ('strictChecking' in options) this.options.strictChecking = !!options.strictChecking;
   }
