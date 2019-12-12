@@ -32,17 +32,17 @@ class EventHandler {
   set handler(handler) {
     let $handler = handler;
 
-    if ('element' in handler && 'element' in handler.element) {
+    if ('element' in handler && typeof handler.element === 'object' && 'element' in handler.element) {
       $handler.element = handler.element.element;
     } else if ('elements' in handler) {
-      if ('elements' in handler.elements) {
+      if (typeof handler.elements === 'object' && 'elements' in handler.elements) {
         $handler.element = handler.elements.elements;
       } else {
         $handler.element = handler.elements;
       }
     }
     
-    if ('selector' in handler && 'selector' in handler.selector) {
+    if ('selector' in handler && typeof handler.selector === 'object' && 'selector' in handler.selector) {
       $handler.selector = handler.selector.selector;
     }
 
