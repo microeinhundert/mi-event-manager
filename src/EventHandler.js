@@ -14,7 +14,7 @@ class EventHandler {
   _options = {
     strictChecking: false,
     debug: false
-  }
+  };
 
   /**
    * Getter to get the handler.
@@ -30,7 +30,23 @@ class EventHandler {
    * @returns {void}
    */
   set handler(handler) {
-    this._handler = handler;
+    let $handler = handler;
+
+    if ('element' in handler && 'element' in handler.element) {
+      $handler.element = handler.element.element;
+    } else if ('elements' in handler) {
+      if ('elements' in handler.elements) {
+        $handler.element = handler.elements.elements;
+      } else {
+        $handler.element = handler.elements;
+      }
+    }
+    
+    if ('selector' in handler && 'selector' in handler.selector) {
+      $handler.selector = handler.selector.selector;
+    }
+
+    this._handler = $handler;
   }
 
   /**
@@ -392,9 +408,6 @@ class EventHandler {
    */
   constructor(handler = {}, options = {}) {
     this.handler = handler;
-
-    // 'elements' alias for 'element'
-    if ('elements' in handler && !this.handler.element) this.handler.element = handler.elements;
 
     if ('debug' in options) this.options.debug = !!options.debug;
     if ('strictChecking' in options) this.options.strictChecking = !!options.strictChecking;
