@@ -224,7 +224,23 @@ var EventHandler = function () {
       return this._handler;
     },
     set: function set(handler) {
-      this._handler = handler;
+      var $handler = handler;
+
+      if ('element' in handler && 'element' in handler.element) {
+        $handler.element = handler.element.element;
+      } else if ('elements' in handler) {
+        if ('elements' in handler.elements) {
+          $handler.element = handler.elements.elements;
+        } else {
+          $handler.element = handler.elements;
+        }
+      }
+
+      if ('selector' in handler && 'selector' in handler.selector) {
+        $handler.selector = handler.selector.selector;
+      }
+
+      this._handler = $handler;
     }
   }, {
     key: "options",
@@ -271,7 +287,6 @@ var EventHandler = function () {
     });
 
     this.handler = handler;
-    if ('elements' in handler && !this.handler.element) this.handler.element = handler.elements;
     if ('debug' in options) this.options.debug = !!options.debug;
     if ('strictChecking' in options) this.options.strictChecking = !!options.strictChecking;
   }
