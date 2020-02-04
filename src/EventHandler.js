@@ -207,12 +207,12 @@ class EventHandler {
       };
 
       debounce(
-        callback(data),
+        callback.apply(EventBus, [data]),
         $debounceOptions.wait,
         $debounceOptions.immediate
       );
     } else {
-      callback(data);
+      callback.apply(EventBus, [data]);
     }
 
     if (handlerOptions.debug || paramOptions.debug || this.options.debug) this.logExecutionToConsole(listener, data);
@@ -243,19 +243,18 @@ class EventHandler {
       once: 'once' in handlerOptions ? handlerOptions.once : false,
       passive: 'passive' in handlerOptions ? handlerOptions.passive : (handlerOptions.preventDefault ? false : true) // eslint-disable-line
     };
-    const $params = [event, callback, handlerOptions, paramOptions];
 
     if (paramOptions.detach) {
       if (paramOptions.delegate) {
         off(
           listener,
           nodeOrSelector,
-          event => this.executeListenerCallback.apply(event, $params)
+          event => this.executeListenerCallback(event, callback, handlerOptions, paramOptions)
         );
       } else {
         nodeOrSelector.removeEventListener(
           listener,
-          event => this.executeListenerCallback.apply(event, $params),
+          event => this.executeListenerCallback(event, callback, handlerOptions, paramOptions),
           $options
         );
       }
@@ -263,12 +262,12 @@ class EventHandler {
       on(
         listener,
         nodeOrSelector,
-        event => this.executeListenerCallback.apply(event, $params)
+        event => this.executeListenerCallback(event, callback, handlerOptions, paramOptions)
       );
     } else {
       nodeOrSelector.addEventListener(
         listener,
-        event => this.executeListenerCallback.apply(event, $params),
+        event => this.executeListenerCallback(event, callback, handlerOptions, paramOptions),
         $options
       );
     }
@@ -299,7 +298,7 @@ class EventHandler {
 
     EventBus.subscribe(
       listener,
-      data => this.executeBusCallback.apply(EventBus, [listener, data, callback, handlerOptions, paramOptions])
+      data => this.executeBusCallback(listener, data, callback, handlerOptions, paramOptions)
     );
 
     if (handlerOptions.debug || paramOptions.debug || this.options.debug) this.logActionToConsole(listener);
@@ -331,7 +330,7 @@ class EventHandler {
                   const $event = event;
                   $event.nodeListIndex = i;
 
-                  this.executeListenerCallback.apply($event, [$event, callback, handlerOptions]);
+                  this.executeListenerCallback($event, callback, handlerOptions);
                 },
                 handlerOptions,
                 paramOptions
@@ -343,7 +342,7 @@ class EventHandler {
             this.listen(
               node,
               listener,
-              event => this.executeListenerCallback.apply(event, [event, callback, handlerOptions]),
+              event => this.executeListenerCallback(event, callback, handlerOptions),
               handlerOptions,
               paramOptions
             );
@@ -364,7 +363,7 @@ class EventHandler {
             this.listen(
               selector,
               listener,
-              event => this.executeListenerCallback.apply(event, [event, callback, handlerOptions]),
+              event => this.executeListenerCallback(event, callback, handlerOptions),
               handlerOptions,
               $paramOptions
             );
@@ -377,7 +376,7 @@ class EventHandler {
               this.listen(
                 el,
                 listener,
-                event => this.executeListenerCallback.apply(event, [event, callback, handlerOptions]),
+                event => this.executeListenerCallback(event, callback, handlerOptions),
                 handlerOptions,
                 $paramOptions
               );
