@@ -32,13 +32,13 @@ class EventHandler {
   set handler(handler) {
     let $handler = handler;
 
-    if ('element' in handler && typeof handler.element === 'object' && 'element' in handler.element) {
-      $handler.element = handler.element.element;
-    } else if ('elements' in handler) {
-      if (typeof handler.elements === 'object' && 'elements' in handler.elements) {
-        $handler.element = handler.elements.elements;
+    if ('node' in handler && typeof handler.node === 'object' && 'node' in handler.node) {
+      $handler.node = handler.node.node;
+    } else if ('nodes' in handler) {
+      if (typeof handler.nodes === 'object' && 'nodes' in handler.nodes) {
+        $handler.node = handler.nodes.nodes;
       } else {
-        $handler.element = handler.elements;
+        $handler.node = handler.nodes;
       }
     }
     
@@ -82,14 +82,14 @@ class EventHandler {
   }
 
   /**
-   * Getter to check if the passed element is valid.
+   * Getter to check if the passed node is valid.
    * @returns {boolean}
    */
-  get isValidElement() {
-    const $element = this.handler.element || {};
-    const $isObject = typeof $element === 'object';
-    const $hasAddMethod = $element.addEventListener;
-    const $isNodeList = $element instanceof NodeList;
+  get isValidNode() {
+    const $node = this.handler.node || {};
+    const $isObject = typeof $node === 'object';
+    const $hasAddMethod = $node.addEventListener;
+    const $isNodeList = $node instanceof NodeList;
 
     return ($isObject && ($hasAddMethod || $isNodeList));
   }
@@ -97,21 +97,21 @@ class EventHandler {
   /**
    * Log an action to the console.
    * @param {string} listener Name of the listener.
-   * @param {HTMLElement|string} elementOrSelector The HTMLElement or CSS selector.
+   * @param {HTMLElement|string} nodeOrSelector The HTMLElement or CSS selector.
    * @param {boolean} detach Is the event listener getting detached (removed)?
    * @param {boolean} delegate Is the event listener getting added as delegated?
    * @returns {void}
    */
-  logActionToConsole(listener, elementOrSelector, detach, delegate) {
+  logActionToConsole(listener, nodeOrSelector, detach, delegate) {
     if (!listener) return;
 
     const $unixTimestamp = new Date().getTime();
 
-    if (elementOrSelector) {
-      const $elementIdentifier = typeof elementOrSelector === 'string' ? elementOrSelector : (elementOrSelector.className || elementOrSelector.nodeName || typeof elementOrSelector);
+    if (nodeOrSelector) {
+      const $nodeIdentifier = typeof nodeOrSelector === 'string' ? nodeOrSelector : (nodeOrSelector.className || nodeOrSelector.nodeName || typeof nodeOrSelector);
 
       console.log(
-        `%c[${$unixTimestamp}] ${detach ? 'Removed' : 'Added'}${delegate ? ' delegated' : ''} listener "${listener}" ${detach ? 'from' : 'to'} "${$elementIdentifier}".`,
+        `%c[${$unixTimestamp}] ${detach ? 'Removed' : 'Added'}${delegate ? ' delegated' : ''} listener "${listener}" ${detach ? 'from' : 'to'} "${$nodeIdentifier}".`,
         `color: ${detach ? 'red' : 'green'}`
       );
     } else {
@@ -138,10 +138,10 @@ class EventHandler {
         'color: purple'
       );
     } else {
-      const $elementIdentifier = eventOrListener.target.className || eventOrListener.target.nodeName || typeof eventOrListener.target.element;
+      const $nodeIdentifier = eventOrListener.target.className || eventOrListener.target.nodeName || typeof eventOrListener.target.node;
 
       console.log(
-        `%c[${$unixTimestamp}] Fired "${eventOrListener.type}" on element "${$elementIdentifier}".`,
+        `%c[${$unixTimestamp}] Fired "${eventOrListener.type}" on node "${$nodeIdentifier}".`,
         'color: orange'
       );
     }
@@ -220,7 +220,7 @@ class EventHandler {
 
   /**
    * Listen to an event.
-   * @param {HTMLElement|string} elementOrSelector The HTMLElement or CSS selector.
+   * @param {HTMLElement|string} nodeOrSelector The HTMLElement or CSS selector.
    * @param {string} listener Event type to listen for.
    * @param {callback} callback The function to execute every time the listener gets triggered.
    * @param {Object} handlerOptions Options from the handler object.
@@ -235,7 +235,7 @@ class EventHandler {
    * @param {boolean} paramOptions.debug Enable or disable the debug mode.
    * @returns {void}
    */
-  listen(elementOrSelector, listener, callback, handlerOptions = {}, paramOptions = {}) {
+  listen(nodeOrSelector, listener, callback, handlerOptions = {}, paramOptions = {}) {
     if (handlerOptions.skip) return;
 
     const $options = {
@@ -248,11 +248,11 @@ class EventHandler {
       if (paramOptions.delegate) {
         off(
           listener,
-          elementOrSelector,
+          nodeOrSelector,
           event => this.executeListenerCallback(event, callback, handlerOptions, paramOptions)
         );
       } else {
-        elementOrSelector.removeEventListener(
+        nodeOrSelector.removeEventListener(
           listener,
           event => this.executeListenerCallback(event, callback, handlerOptions, paramOptions),
           $options
@@ -261,11 +261,11 @@ class EventHandler {
     } else if (paramOptions.delegate) {
       on(
         listener,
-        elementOrSelector,
+        nodeOrSelector,
         event => this.executeListenerCallback(event, callback, handlerOptions, paramOptions)
       );
     } else {
-      elementOrSelector.addEventListener(
+      nodeOrSelector.addEventListener(
         listener,
         event => this.executeListenerCallback(event, callback, handlerOptions, paramOptions),
         $options
@@ -275,7 +275,7 @@ class EventHandler {
     if (handlerOptions.debug || paramOptions.debug || this.options.debug) {
       this.logActionToConsole(
         listener,
-        elementOrSelector,
+        nodeOrSelector,
         paramOptions.detach,
         paramOptions.delegate
       );
@@ -312,16 +312,16 @@ class EventHandler {
    */
   handle(paramOptions = {}) {
     const {
-      selector, element, listen, callback, options: handlerOptions = {}
+      selector, node, listen, callback, options: handlerOptions = {}
     } = this.handler;
     const $listeners = Array.isArray(listen) ? listen : [listen];
 
-    if ('element' in this.handler) {
-      if (this.isValidElement) {
-        if (element instanceof NodeList) {
-          const $elements = element;
+    if ('node' in this.handler) {
+      if (this.isValidNode) {
+        if (node instanceof NodeList) {
+          const $nodes = node;
 
-          $elements.forEach((el, i) => {
+          $nodes.forEach((el, i) => {
             $listeners.forEach((listener) => {
               this.listen(
                 el,
@@ -340,7 +340,7 @@ class EventHandler {
         } else {
           $listeners.forEach((listener) => {
             this.listen(
-              element,
+              node,
               listener,
               event => this.executeListenerCallback(event, callback, handlerOptions),
               handlerOptions,
@@ -349,7 +349,7 @@ class EventHandler {
           });
         }
       } else if (this.options.strictChecking) {
-        throw new Error(`"${element}" is not a valid element.`);
+        throw new Error(`"${node}" is not a valid node.`);
       }
     } else if ('selector' in this.handler) {
       if (this.isValidSelector) {
@@ -369,9 +369,9 @@ class EventHandler {
             );
           });
         } else {
-          const $elements = document.querySelectorAll(selector);
+          const $nodes = document.querySelectorAll(selector);
 
-          $elements.forEach((el) => {
+          $nodes.forEach((el) => {
             $listeners.forEach((listener) => {
               this.listen(
                 el,

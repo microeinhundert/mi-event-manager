@@ -28,13 +28,13 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 var EventHandler = function () {
   _createClass(EventHandler, [{
     key: "logActionToConsole",
-    value: function logActionToConsole(listener, elementOrSelector, detach, delegate) {
+    value: function logActionToConsole(listener, nodeOrSelector, detach, delegate) {
       if (!listener) return;
       var $unixTimestamp = new Date().getTime();
 
-      if (elementOrSelector) {
-        var $elementIdentifier = typeof elementOrSelector === 'string' ? elementOrSelector : elementOrSelector.className || elementOrSelector.nodeName || _typeof(elementOrSelector);
-        console.log("%c[".concat($unixTimestamp, "] ").concat(detach ? 'Removed' : 'Added').concat(delegate ? ' delegated' : '', " listener \"").concat(listener, "\" ").concat(detach ? 'from' : 'to', " \"").concat($elementIdentifier, "\"."), "color: ".concat(detach ? 'red' : 'green'));
+      if (nodeOrSelector) {
+        var $nodeIdentifier = typeof nodeOrSelector === 'string' ? nodeOrSelector : nodeOrSelector.className || nodeOrSelector.nodeName || _typeof(nodeOrSelector);
+        console.log("%c[".concat($unixTimestamp, "] ").concat(detach ? 'Removed' : 'Added').concat(delegate ? ' delegated' : '', " listener \"").concat(listener, "\" ").concat(detach ? 'from' : 'to', " \"").concat($nodeIdentifier, "\"."), "color: ".concat(detach ? 'red' : 'green'));
       } else {
         console.log("%c[".concat($unixTimestamp, "] Subscribed to \"").concat(listener, "\" on the global event bus."), 'color: blue');
       }
@@ -49,9 +49,9 @@ var EventHandler = function () {
       if (typeof eventOrListener === 'string') {
         console.log("%c[".concat($unixTimestamp, "] Fired \"").concat(eventOrListener, "\" on the global event bus with data \"").concat(JSON.stringify(data), "\"."), 'color: purple');
       } else {
-        var $elementIdentifier = eventOrListener.target.className || eventOrListener.target.nodeName || _typeof(eventOrListener.target.element);
+        var $nodeIdentifier = eventOrListener.target.className || eventOrListener.target.nodeName || _typeof(eventOrListener.target.node);
 
-        console.log("%c[".concat($unixTimestamp, "] Fired \"").concat(eventOrListener.type, "\" on element \"").concat($elementIdentifier, "\"."), 'color: orange');
+        console.log("%c[".concat($unixTimestamp, "] Fired \"").concat(eventOrListener.type, "\" on node \"").concat($nodeIdentifier, "\"."), 'color: orange');
       }
     }
   }, {
@@ -96,7 +96,7 @@ var EventHandler = function () {
     }
   }, {
     key: "listen",
-    value: function listen(elementOrSelector, listener, callback) {
+    value: function listen(nodeOrSelector, listener, callback) {
       var _this = this;
 
       var handlerOptions = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {};
@@ -110,26 +110,26 @@ var EventHandler = function () {
 
       if (paramOptions.detach) {
         if (paramOptions.delegate) {
-          (0, _delegatedEvents.off)(listener, elementOrSelector, function (event) {
+          (0, _delegatedEvents.off)(listener, nodeOrSelector, function (event) {
             return _this.executeListenerCallback(event, callback, handlerOptions, paramOptions);
           });
         } else {
-          elementOrSelector.removeEventListener(listener, function (event) {
+          nodeOrSelector.removeEventListener(listener, function (event) {
             return _this.executeListenerCallback(event, callback, handlerOptions, paramOptions);
           }, $options);
         }
       } else if (paramOptions.delegate) {
-        (0, _delegatedEvents.on)(listener, elementOrSelector, function (event) {
+        (0, _delegatedEvents.on)(listener, nodeOrSelector, function (event) {
           return _this.executeListenerCallback(event, callback, handlerOptions, paramOptions);
         });
       } else {
-        elementOrSelector.addEventListener(listener, function (event) {
+        nodeOrSelector.addEventListener(listener, function (event) {
           return _this.executeListenerCallback(event, callback, handlerOptions, paramOptions);
         }, $options);
       }
 
       if (handlerOptions.debug || paramOptions.debug || this.options.debug) {
-        this.logActionToConsole(listener, elementOrSelector, paramOptions.detach, paramOptions.delegate);
+        this.logActionToConsole(listener, nodeOrSelector, paramOptions.detach, paramOptions.delegate);
       }
     }
   }, {
@@ -155,18 +155,18 @@ var EventHandler = function () {
       var paramOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
       var _this$handler = this.handler,
           selector = _this$handler.selector,
-          element = _this$handler.element,
+          node = _this$handler.node,
           listen = _this$handler.listen,
           callback = _this$handler.callback,
           _this$handler$options = _this$handler.options,
           handlerOptions = _this$handler$options === void 0 ? {} : _this$handler$options;
       var $listeners = Array.isArray(listen) ? listen : [listen];
 
-      if ('element' in this.handler) {
-        if (this.isValidElement) {
-          if (element instanceof NodeList) {
-            var $elements = element;
-            $elements.forEach(function (el, i) {
+      if ('node' in this.handler) {
+        if (this.isValidNode) {
+          if (node instanceof NodeList) {
+            var $nodes = node;
+            $nodes.forEach(function (el, i) {
               $listeners.forEach(function (listener) {
                 _this3.listen(el, listener, function (event) {
                   var $event = event;
@@ -178,13 +178,13 @@ var EventHandler = function () {
             });
           } else {
             $listeners.forEach(function (listener) {
-              _this3.listen(element, listener, function (event) {
+              _this3.listen(node, listener, function (event) {
                 return _this3.executeListenerCallback(event, callback, handlerOptions);
               }, handlerOptions, paramOptions);
             });
           }
         } else if (this.options.strictChecking) {
-          throw new Error("\"".concat(element, "\" is not a valid element."));
+          throw new Error("\"".concat(node, "\" is not a valid node."));
         }
       } else if ('selector' in this.handler) {
         if (this.isValidSelector) {
@@ -199,9 +199,9 @@ var EventHandler = function () {
               }, handlerOptions, $paramOptions);
             });
           } else {
-            var _$elements = document.querySelectorAll(selector);
+            var _$nodes = document.querySelectorAll(selector);
 
-            _$elements.forEach(function (el) {
+            _$nodes.forEach(function (el) {
               $listeners.forEach(function (listener) {
                 _this3.listen(el, listener, function (event) {
                   return _this3.executeListenerCallback(event, callback, handlerOptions);
@@ -226,13 +226,13 @@ var EventHandler = function () {
     set: function set(handler) {
       var $handler = handler;
 
-      if ('element' in handler && _typeof(handler.element) === 'object' && 'element' in handler.element) {
-        $handler.element = handler.element.element;
-      } else if ('elements' in handler) {
-        if (_typeof(handler.elements) === 'object' && 'elements' in handler.elements) {
-          $handler.element = handler.elements.elements;
+      if ('node' in handler && _typeof(handler.node) === 'object' && 'node' in handler.node) {
+        $handler.node = handler.node.node;
+      } else if ('nodes' in handler) {
+        if (_typeof(handler.nodes) === 'object' && 'nodes' in handler.nodes) {
+          $handler.node = handler.nodes.nodes;
         } else {
-          $handler.element = handler.elements;
+          $handler.node = handler.nodes;
         }
       }
 
@@ -263,12 +263,12 @@ var EventHandler = function () {
       }
     }
   }, {
-    key: "isValidElement",
+    key: "isValidNode",
     get: function get() {
-      var $element = this.handler.element || {};
-      var $isObject = _typeof($element) === 'object';
-      var $hasAddMethod = $element.addEventListener;
-      var $isNodeList = $element instanceof NodeList;
+      var $node = this.handler.node || {};
+      var $isObject = _typeof($node) === 'object';
+      var $hasAddMethod = $node.addEventListener;
+      var $isNodeList = $node instanceof NodeList;
       return $isObject && ($hasAddMethod || $isNodeList);
     }
   }]);
