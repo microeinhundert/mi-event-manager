@@ -40,11 +40,11 @@ var EventManager = function () {
     }
   }, {
     key: "handleSingle",
-    value: function handleSingle(elementOrSelector) {
+    value: function handleSingle(nodeOrSelector) {
       var paramOptions = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
       this.handlers.filter(function (_ref) {
         var handler = _ref.handler;
-        return handler.element === elementOrSelector || handler.selector === elementOrSelector;
+        return handler.node === nodeOrSelector || handler.selector === nodeOrSelector;
       }).forEach(function (handlerInstance) {
         return handlerInstance.handle(paramOptions);
       });
@@ -68,26 +68,26 @@ var EventManager = function () {
     }
   }, {
     key: "attach",
-    value: function attach(elementOrSelector) {
+    value: function attach(nodeOrSelector) {
       var paramOptions = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
-      if (elementOrSelector) {
-        this.handleSingle(elementOrSelector, paramOptions);
+      if (nodeOrSelector) {
+        this.handleSingle(nodeOrSelector, paramOptions);
       } else {
         this.handleAll(paramOptions);
       }
     }
   }, {
     key: "detach",
-    value: function detach(elementOrSelector) {
+    value: function detach(nodeOrSelector) {
       var paramOptions = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
       var $paramOptions = _objectSpread({}, paramOptions, {
         detach: true
       });
 
-      if (elementOrSelector) {
-        this.handleSingle(elementOrSelector, $paramOptions);
+      if (nodeOrSelector) {
+        this.handleSingle(nodeOrSelector, $paramOptions);
       } else {
         this.handleAll($paramOptions);
       }

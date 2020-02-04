@@ -46,13 +46,13 @@ class EventManager {
 
   /**
    * Handle a single event listener.
-   * @param {HTMLElement|string} elementOrSelector The HTMLElement or CSS selector.
+   * @param {HTMLElement|string} nodeOrSelector The HTMLElement or CSS selector.
    * @param {Object} paramOptions Options passed as function parameter.
    * @returns {void}
    */
-  handleSingle(elementOrSelector, paramOptions = {}) {
+  handleSingle(nodeOrSelector, paramOptions = {}) {
     this.handlers
-      .filter(({ handler }) => (handler.element === elementOrSelector) || (handler.selector === elementOrSelector))
+      .filter(({ handler }) => (handler.node === nodeOrSelector) || (handler.selector === nodeOrSelector))
       .forEach(handlerInstance => handlerInstance.handle(paramOptions));
   }
 
@@ -81,13 +81,13 @@ class EventManager {
 
   /**
    * Attach a single event listener.
-   * @param {HTMLElement|string} elementOrSelector The HTMLElement or CSS selector.
+   * @param {HTMLElement|string} nodeOrSelector The HTMLElement or CSS selector.
    * @param {Object} paramOptions Options passed as function parameter.
    * @returns {void}
    */
-  attach(elementOrSelector, paramOptions = {}) {
-    if (elementOrSelector) {
-      this.handleSingle(elementOrSelector, paramOptions);
+  attach(nodeOrSelector, paramOptions = {}) {
+    if (nodeOrSelector) {
+      this.handleSingle(nodeOrSelector, paramOptions);
     } else {
       this.handleAll(paramOptions);
     }
@@ -95,18 +95,18 @@ class EventManager {
 
   /**
    * Detach a single event listener.
-   * @param {HTMLElement|string} elementOrSelector The HTMLElement or CSS selector.
+   * @param {HTMLElement|string} nodeOrSelector The HTMLElement or CSS selector.
    * @param {Object} paramOptions Options passed as function parameter.
    * @returns {void}
    */
-  detach(elementOrSelector, paramOptions = {}) {
+  detach(nodeOrSelector, paramOptions = {}) {
     const $paramOptions = {
       ...paramOptions,
       detach: true
     };
 
-    if (elementOrSelector) {
-      this.handleSingle(elementOrSelector, $paramOptions);
+    if (nodeOrSelector) {
+      this.handleSingle(nodeOrSelector, $paramOptions);
     } else {
       this.handleAll($paramOptions);
     }
