@@ -68,9 +68,9 @@ var EventHandler = function () {
           immediate: false
         }, handlerOptions.debounce);
 
-        (0, _debounce.debounce)(callback(event), $debounceOptions.wait, $debounceOptions.immediate);
+        (0, _debounce.debounce)(callback.apply(event, [event]), $debounceOptions.wait, $debounceOptions.immediate);
       } else {
-        callback(event);
+        callback.apply(event, [event]);
       }
 
       if (handlerOptions.debug || paramOptions.debug || this.options.debug) this.logExecutionToConsole(event);
@@ -107,24 +107,25 @@ var EventHandler = function () {
         once: 'once' in handlerOptions ? handlerOptions.once : false,
         passive: 'passive' in handlerOptions ? handlerOptions.passive : handlerOptions.preventDefault ? false : true
       };
+      var $params = [event, callback, handlerOptions, paramOptions];
 
       if (paramOptions.detach) {
         if (paramOptions.delegate) {
           (0, _delegatedEvents.off)(listener, nodeOrSelector, function (event) {
-            return _this.executeListenerCallback(event, callback, handlerOptions, paramOptions);
+            return _this.executeListenerCallback.apply(event, $params);
           });
         } else {
           nodeOrSelector.removeEventListener(listener, function (event) {
-            return _this.executeListenerCallback(event, callback, handlerOptions, paramOptions);
+            return _this.executeListenerCallback.apply(event, $params);
           }, $options);
         }
       } else if (paramOptions.delegate) {
         (0, _delegatedEvents.on)(listener, nodeOrSelector, function (event) {
-          return _this.executeListenerCallback(event, callback, handlerOptions, paramOptions);
+          return _this.executeListenerCallback.apply(event, $params);
         });
       } else {
         nodeOrSelector.addEventListener(listener, function (event) {
-          return _this.executeListenerCallback(event, callback, handlerOptions, paramOptions);
+          return _this.executeListenerCallback.apply(event, $params);
         }, $options);
       }
 
@@ -142,7 +143,7 @@ var EventHandler = function () {
       if (handlerOptions.skip) return;
 
       _lightEventBus.EventBusSingleton.subscribe(listener, function (data) {
-        return _this2.executeBusCallback(listener, data, callback, handlerOptions, paramOptions);
+        return _this2.executeBusCallback.apply(_lightEventBus.EventBusSingleton, [listener, data, callback, handlerOptions, paramOptions]);
       });
 
       if (handlerOptions.debug || paramOptions.debug || this.options.debug) this.logActionToConsole(listener);
@@ -172,14 +173,14 @@ var EventHandler = function () {
                   var $event = event;
                   $event.nodeListIndex = i;
 
-                  _this3.executeListenerCallback($event, callback, handlerOptions);
+                  _this3.executeListenerCallback.apply($event, [$event, callback, handlerOptions]);
                 }, handlerOptions, paramOptions);
               });
             });
           } else {
             $listeners.forEach(function (listener) {
               _this3.listen(node, listener, function (event) {
-                return _this3.executeListenerCallback(event, callback, handlerOptions);
+                return _this3.executeListenerCallback.apply(event, [event, callback, handlerOptions]);
               }, handlerOptions, paramOptions);
             });
           }
@@ -195,7 +196,7 @@ var EventHandler = function () {
           if ($paramOptions.delegate) {
             $listeners.forEach(function (listener) {
               _this3.listen(selector, listener, function (event) {
-                return _this3.executeListenerCallback(event, callback, handlerOptions);
+                return _this3.executeListenerCallback.apply(event, [event, callback, handlerOptions]);
               }, handlerOptions, $paramOptions);
             });
           } else {
@@ -204,7 +205,7 @@ var EventHandler = function () {
             _$nodes.forEach(function (el) {
               $listeners.forEach(function (listener) {
                 _this3.listen(el, listener, function (event) {
-                  return _this3.executeListenerCallback(event, callback, handlerOptions);
+                  return _this3.executeListenerCallback.apply(event, [event, callback, handlerOptions]);
                 }, handlerOptions, $paramOptions);
               });
             });

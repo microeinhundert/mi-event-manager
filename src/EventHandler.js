@@ -156,8 +156,8 @@ class EventHandler {
    * @param {boolean} handlerOptions.preventDefault Prevent the default action being executed.
    * @param {boolean} handlerOptions.stopPropagation Prevent further propagation of the current event in the capturing and bubbling phases.
    * @param {Object|boolean} handlerOptions.debounce Options for debouncing. You can also just pass 'true' to use the default options.
-   * @param {Object} handlerOptions.debounce.wait The wait interval time in milliseconds.
-   * @param {Object} handlerOptions.debounce.immediate Trigger the function on the leading edge instead of the trailing edge of the wait interval.
+   * @param {number} handlerOptions.debounce.wait The wait interval time in milliseconds.
+   * @param {boolean} handlerOptions.debounce.immediate Trigger the function on the leading edge instead of the trailing edge of the wait interval.
    * @param {Object} paramOptions Options passed as function parameter.
    * @param {boolean} paramOptions.debug Enable or disable the debug mode.
    * @returns {void}
@@ -173,12 +173,12 @@ class EventHandler {
       };
 
       debounce(
-        callback(event),
+        callback.apply(event, [event]),
         $debounceOptions.wait,
         $debounceOptions.immediate
       );
     } else {
-      callback(event);
+      callback.apply(event, [event]);
     }
 
     if (handlerOptions.debug || paramOptions.debug || this.options.debug) this.logExecutionToConsole(event);
@@ -192,8 +192,8 @@ class EventHandler {
    * @param {Object} handlerOptions Options from the handler object.
    * @param {boolean} handlerOptions.debug Enable or disable the debug mode.
    * @param {Object|boolean} handlerOptions.debounce Options for debouncing. You can also just pass 'true' to use the default options.
-   * @param {Object} handlerOptions.debounce.wait The wait interval time in milliseconds.
-   * @param {Object} handlerOptions.debounce.immediate Trigger the function on the leading edge instead of the trailing edge of the wait interval.
+   * @param {number} handlerOptions.debounce.wait The wait interval time in milliseconds.
+   * @param {boolean} handlerOptions.debounce.immediate Trigger the function on the leading edge instead of the trailing edge of the wait interval.
    * @param {Object} paramOptions Options passed as function parameter.
    * @param {boolean} paramOptions.debug Enable or disable the debug mode.
    * @returns {void}
@@ -243,18 +243,19 @@ class EventHandler {
       once: 'once' in handlerOptions ? handlerOptions.once : false,
       passive: 'passive' in handlerOptions ? handlerOptions.passive : (handlerOptions.preventDefault ? false : true) // eslint-disable-line
     };
+    const $params = [event, callback, handlerOptions, paramOptions];
 
     if (paramOptions.detach) {
       if (paramOptions.delegate) {
         off(
           listener,
           nodeOrSelector,
-          event => this.executeListenerCallback(event, callback, handlerOptions, paramOptions)
+          event => this.executeListenerCallback.apply(event, $params)
         );
       } else {
         nodeOrSelector.removeEventListener(
           listener,
-          event => this.executeListenerCallback(event, callback, handlerOptions, paramOptions),
+          event => this.executeListenerCallback.apply(event, $params),
           $options
         );
       }
@@ -262,12 +263,12 @@ class EventHandler {
       on(
         listener,
         nodeOrSelector,
-        event => this.executeListenerCallback(event, callback, handlerOptions, paramOptions)
+        event => this.executeListenerCallback.apply(event, $params)
       );
     } else {
       nodeOrSelector.addEventListener(
         listener,
-        event => this.executeListenerCallback(event, callback, handlerOptions, paramOptions),
+        event => this.executeListenerCallback.apply(event, $params),
         $options
       );
     }
@@ -298,7 +299,7 @@ class EventHandler {
 
     EventBus.subscribe(
       listener,
-      data => this.executeBusCallback(listener, data, callback, handlerOptions, paramOptions)
+      data => this.executeBusCallback.apply(EventBus, [listener, data, callback, handlerOptions, paramOptions])
     );
 
     if (handlerOptions.debug || paramOptions.debug || this.options.debug) this.logActionToConsole(listener);
@@ -330,7 +331,7 @@ class EventHandler {
                   const $event = event;
                   $event.nodeListIndex = i;
 
-                  this.executeListenerCallback($event, callback, handlerOptions);
+                  this.executeListenerCallback.apply($event, [$event, callback, handlerOptions]);
                 },
                 handlerOptions,
                 paramOptions
@@ -342,7 +343,7 @@ class EventHandler {
             this.listen(
               node,
               listener,
-              event => this.executeListenerCallback(event, callback, handlerOptions),
+              event => this.executeListenerCallback.apply(event, [event, callback, handlerOptions]),
               handlerOptions,
               paramOptions
             );
@@ -363,7 +364,7 @@ class EventHandler {
             this.listen(
               selector,
               listener,
-              event => this.executeListenerCallback(event, callback, handlerOptions),
+              event => this.executeListenerCallback.apply(event, [event, callback, handlerOptions]),
               handlerOptions,
               $paramOptions
             );
@@ -376,7 +377,7 @@ class EventHandler {
               this.listen(
                 el,
                 listener,
-                event => this.executeListenerCallback(event, callback, handlerOptions),
+                event => this.executeListenerCallback.apply(event, [event, callback, handlerOptions]),
                 handlerOptions,
                 $paramOptions
               );
