@@ -3,11 +3,11 @@ Provides a streamlined interface for managing DOM events, supporting event deleg
 
 ### Installation
 ```console
-npm install mi-event-manager
+npm install microeinhundert/mi-event-manager
 ```
 or
 ```console
-yarn add mi-event-manager
+yarn add microeinhundert/mi-event-manager
 ```
 
 TODO
